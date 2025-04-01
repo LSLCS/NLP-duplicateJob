@@ -1,0 +1,26 @@
+# Data Handling
+pandas
+numpy
+
+# Embeddings & NLP
+sentence-transformers
+spacy
+
+# Vector Search
+faiss-cpu  # or faiss-gpu if using GPU
+hnswlib
+# scann
+
+# Data Visualization (for EDA)
+matplotlib
+seaborn
+
+# Machine Learning Utilities
+scikit-learn
+
+# API (if implementing REST API)
+fastapi
+uvicorn
+
+# Containerization (if applicable)
+python-dotenv  # For managing environment variables in Docker
