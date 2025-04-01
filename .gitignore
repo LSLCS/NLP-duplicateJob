@@ -175,3 +175,8 @@ cython_debug/
 
 # large csv
 data/jobs.csv
+
+.DS_Store
+
+HelperNLP-duplicateJob/
+archive/
