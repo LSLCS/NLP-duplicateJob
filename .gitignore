@@ -180,5 +180,5 @@ data/jobs.csv
 
 HelperNLP-duplicateJob/
 archive/
-similarity/
+largeFile/
 .csv
