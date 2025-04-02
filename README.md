@@ -30,9 +30,12 @@ pip install -r requirements.txt
 ```
 
 ### **Run with Docker**  
-Build and run the containerized app:  
+- Make sure that Docker and Docker Compose are installed.
+- Build, run and stop the containerized app:  
 ```bash
-docker-compose up --build
+docker-compose build
+docker-compose up
+docker-compose down
 ```
 
 ---
