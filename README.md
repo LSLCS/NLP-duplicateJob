@@ -16,18 +16,6 @@ This project detects duplicate job postings using **text embeddings** and **vect
 
 ## **1. Setup Instructions**  
 
-### **Prerequisites**  
-Ensure you have the following installed:  
-- Python 3.8+  
-- Docker & Docker Compose  
-- Git  
-
-### **Clone Repository**  
-```bash
-git clone https://github.com/your-username/job-deduplication.git
-cd job-deduplication
-```
-
 ### **Install Dependencies**  
 Using pip:  
 ```bash
@@ -37,7 +25,7 @@ pip install -r requirements.txt
 Alternatively, using a virtual environment:  
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate 
 pip install -r requirements.txt
 ```
 
@@ -50,122 +38,80 @@ docker-compose up --build
 ---
 
 ## **2. Data Exploration**  
-We analyze the job postings dataset (`jobs.csv`), checking:  
-✅ Missing values  
-✅ Text length distribution  
-✅ Existing duplicates  
+I analyze the job postings dataset (`jobs.csv`), checking:  
+- Basic info
+- Missing values  
+- Distribution of job titles
+- Top companies with most job postings
+- Length of job descriptions
+- Top Job Titles with Duplicated Job Postings
+- Top Companies with Duplicated Job Postings
+- Job titles for Top Duplicated Job Descriptions for company Thriveworks (the company with highest Duplicated Job Postings)
+- Job titles for Top Duplicated Job Descriptions for company LocumJobsOnline (the company with 2nd highest Duplicated Job Postings)
 
 🔹 **Key Observations:**  
-- Many job descriptions contain slight variations but describe the same role.  
-- Some postings have redundant listings with identical job titles and companies.  
+- Many job descriptions are exactly the same.
+- The highest frequency is almost 600.  
+- One company has as high as about 1400 duplicated job postings.  
 
-Full analysis is in [`notebooks/EDA.ipynb`](notebooks/EDA.ipynb).  
+Full analysis is in [`eda/EDA.ipynb`](eda/EDA.ipynb).  
 
 ---
 
 ## **3. Embeddings Generation**  
-We use **Sentence-Transformers (SBERT)** to convert job descriptions into embeddings.  
-```python
-from sentence_transformers import SentenceTransformer
-model = SentenceTransformer('all-MiniLM-L6-v2')
-
-# Generate embeddings
-embeddings = model.encode(job_descriptions, show_progress_bar=True)
-```
-🔹 **Why SBERT?**  
-- Efficient & high-quality text representations  
+I use **Sentence-Transformers (SBERT)** to convert job descriptions into embeddings.  
+- It provides pre-trained models with high quality embeddings
+- Easy to use
 - Works well for semantic similarity tasks  
 
 ---
 
 ## **4. Vector Search Implementation**  
-We use **FAISS** for efficient similarity search.  
-```python
-import faiss
-
-# Create FAISS index
-index = faiss.IndexFlatL2(384)  # 384 is the embedding dimension
-index.add(embeddings)
-```
-
-### **Search for Similar Jobs**  
-```python
-D, I = index.search(query_embedding, k=5)  # Find top 5 similar jobs
-```
-
+I use **FAISS** for efficient similarity search.  
+- Training is not necessary
+- Supports Batch search
+  
 ---
 
 ## **5. Evaluation**  
-To determine duplicate postings, we analyze **cosine similarity distribution** and set a threshold:  
+To determine duplicate postings, I calculated the similarity score based on the distance from vector search and set a threshold:  
 - If **similarity > 0.85**, jobs are considered duplicates.  
-- Threshold chosen based on empirical testing & histogram analysis.  
+- Threshold chosen based on histogram analysis.  
+- If there is more time, I will analyze the similarity of the job titles with the same job description got from EDA, and make adjustment to the threshold. 
 
-📊 **Results:**  
-| Job ID 1 | Job ID 2 | Similarity Score |  
-|----------|---------|-----------------|  
-| 101      | 205     | 0.92            |  
-| 318      | 527     | 0.87            |  
+![Histogram of similarity](similarity_score_histogram.png)
 
+📊 **Results, only listing 20 as example:**  
+job_id_1| job_id_2| similarity_score
+| 1| 25696| 0.961661   |
+| 1| 35280| 0.93402946   |
+| 1| 89349| 0.93402946   |
+| 1| 99534| 0.91176677   |
+| 1| 58288| 0.9073727   |
+| 1| 74039| 0.9073727   |
+| 1| 97592| 0.9073727   |
+| 2| 95310| 0.9902125   |
+| 2| 1167| 0.9900367   |
+| 2| 20465| 0.9898991   |
+| 2| 40084| 0.988677   |
+| 2| 10142| 0.9881144   |
+| 2| 29573| 0.9880569   |
+| 2| 58630| 0.98795766   |
+| 2| 85205| 0.987644   |
+| 2| 57945| 0.9875496   |
+| 2| 511| 0.98746455   |
+| 2| 1054| 0.9870129   |
+| 2| 68233| 0.98689437   |
 ---
 
 ## **6. Running the Application**  
 
-### **Step 1: Prepare Data & Generate Embeddings**  
+### **Step 1: Prepare Data & Generate Embeddings & Get Vector Search Index**  
 ```bash
-python src/embeddings.py
+python src/get_embeddings.py
 ```
 
-### **Step 2: Build & Run Vector Search**  
+### **Step 2: Run Vector Search and Calculate Similarity and duplication **  
 ```bash
-python src/vector_search.py
+python src/main.py
 ```
-
-### **Step 3: Evaluate Results**  
-```bash
-python src/evaluation.py
-```
-
-### **Step 4: Run in Docker**  
-```bash
-docker-compose up --build
-```
-
----
-
-## **7. File Structure**  
-```
-job-deduplication/  
-│── data/                  # Dataset placeholder (add to .gitignore)  
-│── notebooks/             # Jupyter Notebook for EDA  
-│── src/                   # Source code  
-│   │── embeddings.py      # Embedding generation  
-│   │── vector_search.py   # FAISS search implementation  
-│   │── evaluation.py      # Similarity threshold & results  
-│   │── main.py            # Entry point  
-│── docker/  
-│   │── Dockerfile         # Container setup  
-│   │── docker-compose.yml # Dependency management  
-│── requirements.txt       # Dependencies  
-│── .env.example          # Placeholder for env variables  
-│── README.md              # Documentation  
-│── demo.mp4               # 2-minute demo video  
-```
-
----
-
-## **8. Future Enhancements** 🚀  
-🔹 Deploy as a **FastAPI** or **Flask API**  
-🔹 Use **Milvus** or **Pinecone** for scalable vector search  
-🔹 Store embeddings in a database (PostgreSQL, MongoDB)  
-
----
-
-## **9. Video Demo** 🎥  
-📌 [Link to video demo](#) (or include demo.mp4 in submission)  
-
----
-
-Let me know if you need any changes! 🚀
-
-threshold analysis improvement: I was planning to analyze the similarity of the job titles with the same job description got from EDA. But didn't have time
-so just used histogram 
