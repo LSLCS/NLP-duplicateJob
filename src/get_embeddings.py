@@ -1,10 +1,8 @@
-import time
 import pandas as pd
 from embedding_util import generate_embeddings
 from vector_search import VectorSearch
 
 # import numpy as np
-start_time = time.time()
 # from sklearn.metrics.pairwise import cosine_similarity
 # import torch
 
@@ -29,5 +27,5 @@ print(f"Indexed {len(embeddings)} job descriptions.")
 
 # Save the FAISS index to a file
 # faiss.write_index(index, 'job_embeddings.index') 
-vector_search.save_index("job_index.faiss")
+vector_search.save_index("largeFile/job_index.faiss")
 

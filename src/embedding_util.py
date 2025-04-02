@@ -14,7 +14,7 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 # embeddings = model.encode(job_descs, convert_to_tensor=True)
 # torch.save(embeddings, 'job_embeddings.pt')
 
-def generate_embeddings(job_descriptions, save_path="job_embeddings.npy", as_tensor=False):
+def generate_embeddings(job_descriptions, save_path="largeFile/job_embeddings.npy", as_tensor=False):
     """
     Generate embeddings for job descriptions and save them.
     

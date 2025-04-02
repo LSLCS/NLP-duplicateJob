@@ -26,7 +26,7 @@ class VectorSearch:
         Search for the top-k most similar vectors.
         Returns distances and indices of matches.
         """
-        query_embedding = np.array(query_embedding).astype("float32").reshape(1, -1)
+        # query_embedding = np.array(query_embedding).astype("float32").reshape(1, -1)
         distances, indices = self.index.search(query_embedding, k)
         return distances, indices
 
