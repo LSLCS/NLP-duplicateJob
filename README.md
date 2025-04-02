@@ -86,6 +86,7 @@ To determine duplicate postings, I calculated the similarity score based on the 
 
 📊 **Results, only listing 20 as example:**  
 job_id_1| job_id_2| similarity_score
+| -- | --- | ------ |
 | 1| 25696| 0.961661   |
 | 1| 35280| 0.93402946   |
 | 1| 89349| 0.93402946   |
